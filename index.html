@@ -1,113 +1,121 @@
-<div class="sec"><h2>Tore</h2>
-<div class="rw"><span class="rc" id="hg">0</span><button class="bh" onclick="c('hg',1)">+</button><button class="ba" onclick="c('ag',1)">+</button><span class="rc" id="ag">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button><div class="gl" id="gl"></div></div>
-<div class="sec"><h2>Schuesse aufs Tor</h2>
-<div class="rw"><span class="rc" id="hst">0</span><button class="bh" onclick="c('hst',1)">+</button><button class="ba" onclick="c('ast',1)">+</button><span class="rc" id="ast">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Schuesse vorbei</h2>
-<div class="rw"><span class="rc" id="hsb">0</span><button class="bh" onclick="c('hsb',1)">+</button><button class="ba" onclick="c('asb',1)">+</button><span class="rc" id="asb">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Ecken</h2>
-<div class="rw"><span class="rc" id="he">0</span><button class="bh" onclick="c('he')">+</button><button class="ba" onclick="c('ae')">+</button><span class="rc" id="ae">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Freistoesse</h2>
-<div class="rw"><span class="rc" id="hf">0</span><button class="bh" onclick="c('hf')">+</button><button class="ba" onclick="c('af')">+</button><span class="rc" id="af">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Gelb</h2>
-<div class="rw"><span class="rc" id="hy">0</span><button class="bh" onclick="c('hy',1)">+</button><button class="ba" onclick="c('ay',1)">+</button><span class="rc" id="ay">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Rot</h2>
-<div class="rw"><span class="rc" id="hr">0</span><button class="bh" onclick="c('hr',1)">+</button><button class="ba" onclick="c('ar',1)">+</button><span class="rc" id="ar">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Elfmeter</h2>
-<div class="rw"><span class="rc" id="hep">0</span><button class="bh" onclick="c('hep',1)">+</button><button class="ba" onclick="c('aep',1)">+</button><span class="rc" id="aep">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Abseits</h2>
-<div class="rw"><span class="rc" id="hab">0</span><button class="bh" onclick="c('hab')">+</button><button class="ba" onclick="c('aab')">+</button><span class="rc" id="aab">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
-<div class="sec"><h2>Fouls</h2>
-<div class="rw"><span class="rc" id="hfo">0</span><button class="bh" onclick="c('hfo',1)">+</button><button class="ba" onclick="c('afo',1)">+</button><span class="rc" id="afo">0</span></div>
-<button class="bu" onclick="uZ()">&#8617; Undo</button></div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Football Tracker v5</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--hc:#c2185b;--ac:#1e88e5}
+body{font-family:-apple-system,Arial,sans-serif;background:#4a7c2e;padding:12px;-webkit-user-select:none;user-select:none}
+.c{max-width:440px;margin:0 auto;text-align:center}
+h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
+.sec{background:rgba(255,255,255,.92);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.sec h2{font-size:.85em;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+#timer{font-size:2.2em;font-family:monospace;text-align:center;display:block;padding:6px 0;color:#111;font-weight:bold}
+#htLabel{text-align:center;font-size:1em;color:#666;margin-bottom:4px;font-weight:bold}
+#nsLabel{text-align:center;font-size:.85em;color:#e65100;font-weight:bold;margin-top:2px;min-height:1.2em}
+#btnStart{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:#2e7d32;color:#fff;font-size:1.15em;font-weight:bold;cursor:pointer;text-align:center;margin-top:6px}
+#btnStart.run{background:#e65100}
+#btnStart.pau{background:#1976d2}
+.ti{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:.9em;margin-bottom:6px;-webkit-user-select:text;user-select:text}
+.tm{width:80px;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:1em;text-align:center;font-weight:bold}
+.cr{display:flex;align-items:center;gap:8px;margin-top:6px}
+.cr label{font-size:.8em;color:#777}
+.cr input[type=color]{width:36px;height:28px;border:none;border-radius:6px}
+.tmr{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:6px}
+.rw{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:2px;flex-wrap:nowrap}
+.rc{font-family:monospace;font-size:1.4em;min-width:34px;text-align:center;font-weight:bold;color:#222;line-height:1;vertical-align:middle;background:#fff;border-radius:6px;padding:2px 4px;box-shadow:inset 0 1px 3px rgba(0,0,0,.1)}
+.bh,.ba{background:var(--hc);color:#fff;border:none;border-radius:6px;padding:10px 24px;font-size:1em;font-weight:bold;cursor:pointer;flex:none;min-width:88px;height:44px}
+.ba{background:var(--ac)}
+.bu{background:#eee;color:#999;border:none;border-radius:6px;padding:6px 0;font-size:.8em;font-weight:bold;cursor:pointer;width:40%;margin:2px auto;display:block}
+.bu:active{background:#ccc;color:#666}
+.bx{background:#78909c;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:4px}
+.be{background:#1565c0;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:6px}
+.gl{font-size:.7em;color:#999;margin-top:6px;padding-top:4px;border-top:1px solid #f0f0f0}
+.gi{padding:2px 0}
+.hd{display:none}
+</style>
+</head>
+<body>
+<div class="c">
+<h1>Football Tracker</h1>
 <div class="sec">
-<button class="bx" onclick="rA()">Alles zuruecksetzen</button>
-<button class="be" onclick="eC()">CSV Export</button>
+<div id="htLabel">1. Halbzeit</div>
+<div id="timer">00:00:00</div>
+<div id="nsLabel"></div>
+<div class="tmr" id="tRow"><label>Minuten:</label><input class="tm" id="hM" type="number" value="45" min="5" max="120"></div>
+<button id="btnStart" type="button" onclick="tA()">Start</button>
+</div>
+<div class="sec">
+<h2>Teams</h2>
+<input class="ti" id="tH" type="text" placeholder="Heim" oninput="sN()">
+<input class="ti" id="tA" type="text" placeholder="Auswaerts" oninput="sN()">
+<div class="cr"><label>Heim:</label><input type="color" id="cH" value="#c2185b" onchange="sC()"><label>Ausw:</label><input type="color" id="cA" value="#1e88e5" onchange="sC()"></div>
+</div>
+<div class="sec"><h2>Tore</h2>
+<div class="rw"><span class="rc" id="hg">0</span><button class="bh" type="button" onclick="c('hg',1)">+</button><button class="ba" type="button" onclick="c('ag',1)">+</button><span class="rc" id="ag">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button><div class="gl" id="gl"></div></div>
+<div class="sec"><h2>Schuesse aufs Tor</h2>
+<div class="rw"><span class="rc" id="hst">0</span><button class="bh" type="button" onclick="c('hst')">+</button><button class="ba" type="button" onclick="c('ast')">+</button><span class="rc" id="ast">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Schuesse vorbei</h2>
+<div class="rw"><span class="rc" id="hsb">0</span><button class="bh" type="button" onclick="c('hsb')">+</button><button class="ba" type="button" onclick="c('asb')">+</button><span class="rc" id="asb">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Ecken</h2>
+<div class="rw"><span class="rc" id="he">0</span><button class="bh" type="button" onclick="c('he')">+</button><button class="ba" type="button" onclick="c('ae')">+</button><span class="rc" id="ae">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Freistoesse</h2>
+<div class="rw"><span class="rc" id="hf">0</span><button class="bh" type="button" onclick="c('hf')">+</button><button class="ba" type="button" onclick="c('af')">+</button><span class="rc" id="af">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Gelb</h2>
+<div class="rw"><span class="rc" id="hy">0</span><button class="bh" type="button" onclick="c('hy')">+</button><button class="ba" type="button" onclick="c('ay')">+</button><span class="rc" id="ay">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Rot</h2>
+<div class="rw"><span class="rc" id="hr">0</span><button class="bh" type="button" onclick="c('hr')">+</button><button class="ba" type="button" onclick="c('ar')">+</button><span class="rc" id="ar">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Elfmeter</h2>
+<div class="rw"><span class="rc" id="hep">0</span><button class="bh" type="button" onclick="c('hep')">+</button><button class="ba" type="button" onclick="c('aep')">+</button><span class="rc" id="aep">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Abseits</h2>
+<div class="rw"><span class="rc" id="hab">0</span><button class="bh" type="button" onclick="c('hab')">+</button><button class="ba" type="button" onclick="c('aab')">+</button><span class="rc" id="aab">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Fouls</h2>
+<div class="rw"><span class="rc" id="hfo">0</span><button class="bh" type="button" onclick="c('hfo')">+</button><button class="ba" type="button" onclick="c('afo')">+</button><span class="rc" id="afo">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec">
+<button class="bx" type="button" onclick="rA()">Alles zuruecksetzen</button>
+<button class="be" type="button" onclick="eC()">CSV Export</button>
 </div>
 </div>
 <script>
-var mo='idle',tI=null,sec=0,hm=45,hn=1,nsR=false,nsS=0,h1T=0,h2T=0,h1NS=0,h2NS=0;
-var ALL=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar','hep','aep','hab','aab','hfo','afo'];
-var cs={};for(var i=0;i<ALL.length;i++)cs[ALL[i]]=0;
+var mo='idle',tI=null,sec=0,hm=45,hn=1,nsR=false,nsS=0;
+var cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0,hep:0,aep:0,hab:0,aab:0,hfo:0,afo:0};
 var gl=[];
 function ft(n){return String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor((n%3600)/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
 function ft2(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
-function hN(){return document.getElementById('tH').value||'Heim';}
-function aN(){return document.getElementById('tA').value||'Auswaerts';}
-function iH(id){return id[0]==='h';}
-function tA(){
-var b=document.getElementById('btnS'),l=document.getElementById('htLbl'),nL=document.getElementById('nsLbl'),tm=document.getElementById('timer');
-if(mo==='idle'){
-hm=parseInt(document.getElementById('hM').value)||30;if(hm<1)hm=30;
-document.getElementById('hM').value=hm;sec=0;nsR=false;nsS=0;h1T=0;h2T=0;h1NS=0;h2NS=0;uT();
-l.textContent=hn===1?'1. Halbzeit':'2. Halbzeit';nL.textContent='';mo='run';b.textContent='Stop';b.className='run';document.getElementById('tRow').classList.add('hd');
-tI=setInterval(function(){sec++;uT();},1000);
-}else if(mo==='run'){
-clearInterval(tI);tI=null;mo='pau';b.textContent='Weiter';b.className='pau';
-}else if(mo==='pau'){
-mo='run';b.textContent='Stop';b.className='run';
-tI=setInterval(function(){sec++;uT();},1000);
-}else if(mo==='ns'){
-mo='ht';nsR=false;clearInterval(tI);tI=null;
-if(hn===1){b.textContent='2. Halbzeit starten';l.textContent='Halbzeit';nL.textContent='+ '+ft2(nsS);b.className='';b.style.background='#2e7d32';h1NS=nsS;}
-else{b.textContent='Spiel beendet';l.textContent='Spiel beendet';nL.textContent='+ '+ft2(nsS);b.className='';b.style.background='#2e7d32';h2NS=nsS;}
-}else if(mo==='ht'){
-hn=2;nsS=0;sec=0;h2T=0;uT();l.textContent='2. Halbzeit';nL.textContent='';mo='run';b.textContent='Stop';b.className='run';document.getElementById('tRow').classList.add('hd');b.style.background='#e65100';
-tI=setInterval(function(){sec++;uT();},1000);
-}}
-function hE(){
-if(mo==='run'||mo==='pau'){clearInterval(tI);tI=null;}
-mo='ns';nsR=true;nsS=0;
-var b=document.getElementById('btnS'),l=document.getElementById('htLbl'),nL=document.getElementById('nsLbl');
-b.textContent='Nachspielzeit stoppen';b.className='';b.style.background='#d32f2f';
-l.textContent='Nachspielzeit';nL.textContent='+ 00:00';
-tI=setInterval(function(){nsS++;uT();},1000);
-}
-function uT(){document.getElementById('timer').textContent=ft(sec);if(nsR)document.getElementById('nsLbl').textContent='+ '+ft2(nsS);}
-function c(id,ask){
-cs[id]++;document.getElementById(id).textContent=cs[id];
-if(ask){
-var nm=prompt('Spielernr. '+(iH(id)?'Heim':'Ausw')+':');
-var tn=iH(id)?hN():aN();
-gl.push({t:ft(sec),n:tn,c:cs[id],p:nm||'-'});rG();
-}sV();
-}
-function uZ(){for(var i=ALL.length-1;i>=0;i--){var k=ALL[i];if(cs[k]>0){cs[k]--;document.getElementById(k).textContent=cs[k];if(k==='hg'||k==='ag'){gl.pop();rG();}sV();break;}}}
-function rG(){var h='';for(var i=0;i<gl.length;i++){var g=gl[i];h+='<div class="gi">'+g.t+' - '+g.n+' #'+g.p+' ('+g.c+')</div>';}document.getElementById('gl').innerHTML=h;}
-function sV(){try{localStorage.setItem('fc',JSON.stringify(cs));localStorage.setItem('fg',JSON.stringify(gl));localStorage.setItem('ft_hm',hm);localStorage.setItem('ft_hn',hn);localStorage.setItem('ft_h1T',h1T);localStorage.setItem('ft_h2T',h2T);localStorage.setItem('ft_h1NS',h1NS);localStorage.setItem('ft_h2NS',h2NS);}catch(e){}}
-function sN(){try{localStorage.setItem('fh',document.getElementById('tH').value);localStorage.setItem('fa',document.getElementById('tA').value);}catch(e){}}
+function tA(){var b=document.getElementById('btnStart'),l=document.getElementById('htLabel');
+if(mo==='idle'){hm=parseInt(document.getElementById('hM').value)||45;if(hm<5)hm=5;document.getElementById('hM').value=hm;sec=0;nsR=false;nsS=0;uT();l.textContent=hn===1?'1. Halbzeit':'2. Halbzeit';document.getElementById('nsLabel').textContent='';mo='run';b.textContent='Stop';b.className='run';document.getElementById('tRow').className='tmr hd';tI=setInterval(function(){sec++;uT();if(sec>=hm*60)hE();},1000);}
+else if(mo==='run'){clearInterval(tI);tI=null;mo='pau';b.textContent='Weiter';b.className='pau';}
+else if(mo==='pau'){mo='run';b.textContent='Stop';b.className='run';tI=setInterval(function(){sec++;uT();if(sec>=hm*60)hE();},1000);}
+else if(mo==='ns'){mo='ht';nsR=false;if(hn===1){b.textContent='2. Halbzeit starten';l.textContent='Halbzeit';b.className='';b.style.background='#2e7d32';}else{b.textContent='Spiel beendet';l.textContent='Spiel beendet';b.className='';b.style.background='#2e7d32';}document.getElementById('nsLabel').textContent='+ Nachspielzeit '+ft2(nsS);}
+else if(mo==='ht'){hn=2;nsS=0;sec=0;uT();l.textContent='2. Halbzeit';document.getElementById('nsLabel').textContent='';mo='run';b.textContent='Stop';b.className='run';document.getElementById('tRow').className='tmr hd';b.style.background='#e65100';tI=setInterval(function(){sec++;uT();if(sec>=hm*60)hE();},1000);}}
+function hE(){clearInterval(tI);tI=null;mo='ns';nsR=true;nsS=0;var b=document.getElementById('btnStart');b.textContent='Nachspielzeit stoppen';b.className='';b.style.background='#d32f2f';document.getElementById('htLabel').textContent='Nachspielzeit';document.getElementById('nsLabel').textContent='+ 00:00';tI=setInterval(function(){nsS++;uT();},1000);}
+function uT(){document.getElementById('timer').textContent=ft(sec);if(nsR)document.getElementById('nsLabel').textContent='+ Nachspielzeit '+ft2(nsS);}
+function c(id,ig){cs[id]++;document.getElementById(id).textContent=cs[id];if(ig===1){var nm=prompt('Spielernr. '+(id==='hg'?'Heim':'Ausw')+':');var tn=id==='hg'?(document.getElementById('tH').value||'Heim'):(document.getElementById('tA').value||'Auswaerts');gl.push({t:ft(sec),n:tn,c:cs[id],p:nm||'-'});rG();}sV();}
+function uZ(){var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar','hep','aep','hab','aab','hfo','afo'];for(var i=k.length-1;i>=0;i--){if(cs[k[i]]>0){cs[k[i]]--;document.getElementById(k[i]).textContent=cs[k[i]];if(k[i]==='hg'||k[i]==='ag'){gl.pop();rG();}sV();break;}}}
+function rG(){var h='';for(var i=0;i<gl.length;i++){var g=gl[i];h+='<div class="gi">'+g.t+' - '+g.n+' #'+g.p+' (Tor '+g.c+')</div>';}document.getElementById('gl').innerHTML=h;}
+function sV(){try{localStorage.setItem('fc',JSON.stringify(cs));localStorage.setItem('fg',JSON.stringify(gl));}catch(e){}}
+function sN(){uD();try{localStorage.setItem('fh',document.getElementById('tH').value);localStorage.setItem('fa',document.getElementById('tA').value);}catch(e){}}
 function sC(){aC();try{localStorage.setItem('fch',document.getElementById('cH').value);localStorage.setItem('fca',document.getElementById('cA').value);}catch(e){}}
 function aC(){document.documentElement.style.setProperty('--hc',document.getElementById('cH').value);document.documentElement.style.setProperty('--ac',document.getElementById('cA').value);}
-function rA(){if(!confirm('Wirklich alles zuruecksetzen?'))return;sec=0;hn=1;mo='idle';clearInterval(tI);tI=null;nsR=false;nsS=0;h1T=0;h2T=0;h1NS=0;h2NS=0;for(var i=0;i<ALL.length;i++)cs[ALL[i]]=0;gl=[];for(var i=0;i<ALL.length;i++)document.getElementById(ALL[i]).textContent='0';document.getElementById('timer').textContent='00:00';document.getElementById('htLbl').textContent='1. Halbzeit';document.getElementById('nsLbl').textContent='';var b=document.getElementById('btnS');b.textContent='Start';b.className='';b.style.background='#2e7d32';document.getElementById('tRow').classList.remove('hd');localStorage.clear();}
-function eC(){
-var hN=hN(),aN=aN();
-var csv='Kategorie,'+hN+','+aN+'\n';
-var L=[['Tore','hg','ag'],['Schuesse aufs Tor','hst','ast'],['Schuesse vorbei','hsb','asb'],['Ecken','he','ae'],['Freistoesse','hf','af'],['Gelb','hy','ay'],['Rot','hr','ar'],['Elfmeter','hep','aep'],['Abseits','hab','aab'],['Fouls','hfo','afo']];
-for(var i=0;i<L.length;i++)csv+=L[i][0]+','+cs[L[i][1]]+','+cs[L[i][2]]+'\n';
-csv+='\nSpielzeiten:\nH1,Dauer (MM:SS),'+ft2(h1T)+'\nH1,Nachspielzeit,'+ft2(h1NS)+'\nH2,Dauer,'+ft2(h2T)+'\nH2,Nachspielzeit,'+ft2(h2NS)+'\n\nTor-Protokoll:\nZeit,Team,Spieler,Tor-Nr\n';
-for(var i=0;i<gl.length;i++){var g=gl[i];csv+=g.t+','+g.n+','+g.p+','+g.c+'\n';}
-var bl=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});var lnk=document.createElement('a');lnk.href=URL.createObjectURL(bl);var d=new Date();lnk.download='spiel_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.csv';document.body.appendChild(lnk);lnk.click();document.body.removeChild(lnk);URL.revokeObjectURL(lnk.href);}
-function load(){
-try{
-var sc=localStorage.getItem('fc');if(sc){cs=JSON.parse(sc);for(var k in cs){var el=document.getElementById(k);if(el)el.textContent=cs[k];}}
-var sg=localStorage.getItem('fg');if(sg){gl=JSON.parse(sg);rG();}
-var hh=localStorage.getItem('fh');if(hh)document.getElementById('tH').value=hh;
-var an=localStorage.getItem('fa');if(an)document.getElementById('tA').value=an;
-var ch=localStorage.getItem('fch');if(ch)document.getElementById('cH').value=ch;
-var ca=localStorage.getItem('fca');if(ca)document.getElementById('cA').value=ca;
-var savedHm=localStorage.getItem('ft_hm');if(savedHm){hm=parseInt(savedHm);document.getElementById('hM').value=hm;}
-var savedHn=localStorage.getItem('ft_hn');if(savedHn){hn=parseInt(savedHn);}
-// temps nicht übernehmen – startet neu
-}catch(e){}aC();uD();}
-function uD(){var h=hN(),a=aN();var eH=document.querySelectorAll('.lH');for(var i=0;i<eH.length;i++)eH[i].textContent=h;var eA=document.querySelectorAll('.lA');for(var i=0;i<eA.length;i++)eA[i].textContent=a;}
+function uD(){var h=document.getElementById('tH').value||'Heim',a=document.getElementById('tA').value||'Auswaerts';var eH=document.querySelectorAll('.lH');for(var i=0;i<eH.length;i++)eH[i].textContent=h;var eA=document.querySelectorAll('.lA');for(var i=0;i<eA.length;i++)eA[i].textContent=a;}
+function rA(){if(!confirm('Wirklich alles zuruecksetzen?'))return;sec=0;hn=1;mo='idle';clearInterval(tI);tI=null;nsR=false;nsS=0;cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0,hep:0,aep:0,hab:0,aab:0,hfo:0,afo:0};gl=[];var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar','hep','aep','hab','aab','hfo','afo'];for(var i=0;i<k.length;i++)document.getElementById(k[i]).textContent='0';document.getElementById('timer').textContent='00:00:00';document.getElementById('htLabel').textContent='1. Halbzeit';document.getElementById('nsLabel').textContent='';var b=document.getElementById('btnStart');b.textContent='Start';b.className='';b.style.background='#2e7d32';document.getElementById('tRow').className='tmr';sV();}
+function eC(){var hN=document.getElementById('tH').value||'Heim',aN=document.getElementById('tA').value||'Auswaerts';var csv='Kategorie,'+hN+','+aN+'\nTore,'+cs.hg+','+cs.ag+'\nSchuesse aufs Tor,'+cs.hst+','+cs.ast+'\nSchuesse vorbei,'+cs.hsb+','+cs.asb+'\nEcken,'+cs.he+','+cs.ae+'\nFreistoesse,'+cs.hf+','+cs.af+'\nGelb,'+cs.hy+','+cs.ay+'\nRot,'+cs.hr+','+cs.ar+'\nElfmeter,'+cs.hep+','+cs.aep+'\nAbseits,'+cs.hab+','+cs.aab+'\nFouls,'+cs.hfo+','+cs.afo+'\n\nTor-Protokoll:\nZeit,Team,Spieler,Tor-Nr\n';for(var i=0;i<gl.length;i++){var g=gl[i];csv+=g.t+','+g.n+','+g.p+','+g.c+'\n';}var bl=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});var lnk=document.createElement('a');lnk.href=URL.createObjectURL(bl);var d=new Date();lnk.download='spiel_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.csv';document.body.appendChild(lnk);lnk.click();document.body.removeChild(lnk);URL.revokeObjectURL(lnk.href);}
+function load(){try{var sc=localStorage.getItem('fc');if(sc){cs=JSON.parse(sc);for(var k in cs){var el=document.getElementById(k);if(el)el.textContent=cs[k];}}var sg=localStorage.getItem('fg');if(sg){gl=JSON.parse(sg);rG();}var hn2=localStorage.getItem('fh');if(hn2)document.getElementById('tH').value=hn2;var an=localStorage.getItem('fa');if(an)document.getElementById('tA').value=an;var ch=localStorage.getItem('fch');if(ch)document.getElementById('cH').value=ch;var ca=localStorage.getItem('fca');if(ca)document.getElementById('cA').value=ca;}catch(e){}aC();uD();}
 load();
 </script>
 </body>
