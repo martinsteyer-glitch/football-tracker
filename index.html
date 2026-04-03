@@ -59,7 +59,7 @@ h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
 <div class="sec"><h2>Tore</h2>
 <div class="rw"><span class="rc" id="hg">0</span><button class="bh" type="button" onclick="c('hg',1)">+</button><button class="ba" type="button" onclick="c('ag',1)">+</button><span class="rc" id="ag">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button><div class="gl" id="gl"></div></div>
-<div class="sec"><h2>Schuesse a.Tor</h2>
+<div class="sec"><h2>Schuesse aufs Tor</h2>
 <div class="rw"><span class="rc" id="hst">0</span><button class="bh" type="button" onclick="c('hst')">+</button><button class="ba" type="button" onclick="c('ast')">+</button><span class="rc" id="ast">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Schuesse vorbei</h2>
@@ -77,6 +77,15 @@ h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
 <div class="sec"><h2>Rot</h2>
 <div class="rw"><span class="rc" id="hr">0</span><button class="bh" type="button" onclick="c('hr')">+</button><button class="ba" type="button" onclick="c('ar')">+</button><span class="rc" id="ar">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Elfmeter</h2>
+<div class="rw"><span class="rc" id="hep">0</span><button class="bh" type="button" onclick="c('hep')">+</button><button class="ba" type="button" onclick="c('aep')">+</button><span class="rc" id="aep">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Abseits</h2>
+<div class="rw"><span class="rc" id="hab">0</span><button class="bh" type="button" onclick="c('hab')">+</button><button class="ba" type="button" onclick="c('aab')">+</button><span class="rc" id="aab">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
+<div class="sec"><h2>Fouls</h2>
+<div class="rw"><span class="rc" id="hfo">0</span><button class="bh" type="button" onclick="c('hfo')">+</button><button class="ba" type="button" onclick="c('afo')">+</button><span class="rc" id="afo">0</span></div>
+<button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec">
 <button class="bx" type="button" onclick="rA()">Alles zuruecksetzen</button>
 <button class="be" type="button" onclick="eC()">CSV Export</button>
@@ -84,7 +93,7 @@ h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
 </div>
 <script>
 var mo='idle',tI=null,sec=0,hm=45,hn=1,nsR=false,nsS=0;
-var cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0};
+var cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0,hep:0,aep:0,hab:0,aab:0,hfo:0,afo:0};
 var gl=[];
 function ft(n){return String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor((n%3600)/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
 function ft2(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
@@ -96,16 +105,16 @@ else if(mo==='ns'){mo='ht';nsR=false;if(hn===1){b.textContent='2. Halbzeit start
 else if(mo==='ht'){hn=2;nsS=0;sec=0;uT();l.textContent='2. Halbzeit';document.getElementById('nsLabel').textContent='';mo='run';b.textContent='Stop';b.className='run';document.getElementById('tRow').className='tmr hd';b.style.background='#e65100';tI=setInterval(function(){sec++;uT();if(sec>=hm*60)hE();},1000);}}
 function hE(){clearInterval(tI);tI=null;mo='ns';nsR=true;nsS=0;var b=document.getElementById('btnStart');b.textContent='Nachspielzeit stoppen';b.className='';b.style.background='#d32f2f';document.getElementById('htLabel').textContent='Nachspielzeit';document.getElementById('nsLabel').textContent='+ 00:00';tI=setInterval(function(){nsS++;uT();},1000);}
 function uT(){document.getElementById('timer').textContent=ft(sec);if(nsR)document.getElementById('nsLabel').textContent='+ Nachspielzeit '+ft2(nsS);}
-function c(id,ig){cs[id]++;document.getElementById(id).textContent=cs[id];if(ig){gl.push({t:ft(sec),n:(id==='hg')?(document.getElementById('tH').value||'Heim'):(document.getElementById('tA').value||'Auswaerts'),c:cs[id]});rG();}sV();}
-function uZ(){var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar'];for(var i=k.length-1;i>=0;i--){if(cs[k[i]]>0){cs[k[i]]--;document.getElementById(k[i]).textContent=cs[k[i]];if(k[i]==='hg'||k[i]==='ag'){gl.pop();rG();}sV();break;}}}
-function rG(){var h='';for(var i=0;i<gl.length;i++)h+='<div class="gi">'+gl[i].t+' - '+gl[i].n+' (Tor '+gl[i].c+')</div>';document.getElementById('gl').innerHTML=h;}
+function c(id,ig){cs[id]++;document.getElementById(id).textContent=cs[id];if(ig===1){var nm=prompt('Spielernr. '+(id==='hg'?'Heim':'Ausw')+':');var tn=id==='hg'?(document.getElementById('tH').value||'Heim'):(document.getElementById('tA').value||'Auswaerts');gl.push({t:ft(sec),n:tn,c:cs[id],p:nm||'-'});rG();}sV();}
+function uZ(){var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar','hep','aep','hab','aab','hfo','afo'];for(var i=k.length-1;i>=0;i--){if(cs[k[i]]>0){cs[k[i]]--;document.getElementById(k[i]).textContent=cs[k[i]];if(k[i]==='hg'||k[i]==='ag'){gl.pop();rG();}sV();break;}}}
+function rG(){var h='';for(var i=0;i<gl.length;i++){var g=gl[i];h+='<div class="gi">'+g.t+' - '+g.n+' #'+g.p+' (Tor '+g.c+')</div>';}document.getElementById('gl').innerHTML=h;}
 function sV(){try{localStorage.setItem('fc',JSON.stringify(cs));localStorage.setItem('fg',JSON.stringify(gl));}catch(e){}}
 function sN(){uD();try{localStorage.setItem('fh',document.getElementById('tH').value);localStorage.setItem('fa',document.getElementById('tA').value);}catch(e){}}
 function sC(){aC();try{localStorage.setItem('fch',document.getElementById('cH').value);localStorage.setItem('fca',document.getElementById('cA').value);}catch(e){}}
 function aC(){document.documentElement.style.setProperty('--hc',document.getElementById('cH').value);document.documentElement.style.setProperty('--ac',document.getElementById('cA').value);}
 function uD(){var h=document.getElementById('tH').value||'Heim',a=document.getElementById('tA').value||'Auswaerts';var eH=document.querySelectorAll('.lH');for(var i=0;i<eH.length;i++)eH[i].textContent=h;var eA=document.querySelectorAll('.lA');for(var i=0;i<eA.length;i++)eA[i].textContent=a;}
-function rA(){if(!confirm('Wirklich alles zuruecksetzen?'))return;sec=0;hn=1;mo='idle';clearInterval(tI);tI=null;nsR=false;nsS=0;cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0};gl=[];var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar'];for(var i=0;i<k.length;i++)document.getElementById(k[i]).textContent='0';document.getElementById('timer').textContent='00:00:00';document.getElementById('htLabel').textContent='1. Halbzeit';document.getElementById('nsLabel').textContent='';var b=document.getElementById('btnStart');b.textContent='Start';b.className='';b.style.background='#2e7d32';document.getElementById('tRow').className='tmr';var b2=document.getElementById('btnStart');b2.textContent='Start';b2.className='';b2.style.background='#2e7d32';var l2=document.getElementById('htLabel');l2.textContent='1. Halbzeit';document.getElementById('nsLabel').textContent='';sV();}
-function eC(){var hN=document.getElementById('tH').value||'Heim',aN=document.getElementById('tA').value||'Auswaerts';var csv='Kategorie,'+hN+','+aN+'\nTore,'+cs.hg+','+cs.ag+'\nSchuesse a.Tor,'+cs.hst+','+cs.ast+'\nSchuesse vorbei,'+cs.hsb+','+cs.asb+'\nEcken,'+cs.he+','+cs.ae+'\nFreistoesse,'+cs.hf+','+cs.af+'\nGelb,'+cs.hy+','+cs.ay+'\nRot,'+cs.hr+','+cs.ar+'\n\nTor-Protokoll:\nZeit,Team,Tor-Nr\n';for(var i=0;i<gl.length;i++){csv+=gl[i].t+','+gl[i].n+','+gl[i].c+'\n';}var bl=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});var lnk=document.createElement('a');lnk.href=URL.createObjectURL(bl);var d=new Date();lnk.download='spiel_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.csv';document.body.appendChild(lnk);lnk.click();document.body.removeChild(lnk);URL.revokeObjectURL(lnk.href);}
+function rA(){if(!confirm('Wirklich alles zuruecksetzen?'))return;sec=0;hn=1;mo='idle';clearInterval(tI);tI=null;nsR=false;nsS=0;cs={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0,hep:0,aep:0,hab:0,aab:0,hfo:0,afo:0};gl=[];var k=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar','hep','aep','hab','aab','hfo','afo'];for(var i=0;i<k.length;i++)document.getElementById(k[i]).textContent='0';document.getElementById('timer').textContent='00:00:00';document.getElementById('htLabel').textContent='1. Halbzeit';document.getElementById('nsLabel').textContent='';var b=document.getElementById('btnStart');b.textContent='Start';b.className='';b.style.background='#2e7d32';document.getElementById('tRow').className='tmr';sV();}
+function eC(){var hN=document.getElementById('tH').value||'Heim',aN=document.getElementById('tA').value||'Auswaerts';var csv='Kategorie,'+hN+','+aN+'\nTore,'+cs.hg+','+cs.ag+'\nSchuesse aufs Tor,'+cs.hst+','+cs.ast+'\nSchuesse vorbei,'+cs.hsb+','+cs.asb+'\nEcken,'+cs.he+','+cs.ae+'\nFreistoesse,'+cs.hf+','+cs.af+'\nGelb,'+cs.hy+','+cs.ay+'\nRot,'+cs.hr+','+cs.ar+'\nElfmeter,'+cs.hep+','+cs.aep+'\nAbseits,'+cs.hab+','+cs.aab+'\nFouls,'+cs.hfo+','+cs.afo+'\n\nTor-Protokoll:\nZeit,Team,Spieler,Tor-Nr\n';for(var i=0;i<gl.length;i++){var g=gl[i];csv+=g.t+','+g.n+','+g.p+','+g.c+'\n';}var bl=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});var lnk=document.createElement('a');lnk.href=URL.createObjectURL(bl);var d=new Date();lnk.download='spiel_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.csv';document.body.appendChild(lnk);lnk.click();document.body.removeChild(lnk);URL.revokeObjectURL(lnk.href);}
 function load(){try{var sc=localStorage.getItem('fc');if(sc){cs=JSON.parse(sc);for(var k in cs){var el=document.getElementById(k);if(el)el.textContent=cs[k];}}var sg=localStorage.getItem('fg');if(sg){gl=JSON.parse(sg);rG();}var hn2=localStorage.getItem('fh');if(hn2)document.getElementById('tH').value=hn2;var an=localStorage.getItem('fa');if(an)document.getElementById('tA').value=an;var ch=localStorage.getItem('fch');if(ch)document.getElementById('cH').value=ch;var ca=localStorage.getItem('fca');if(ca)document.getElementById('cA').value=ca;}catch(e){}aC();uD();}
 load();
 </script>
