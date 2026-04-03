@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Football Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--hc:#c2185b;--ac:#1e88e5}
+body{font-family:-apple-system,Arial,sans-serif;background:#f0f2f5;padding:12px;-webkit-user-select:none;user-select:none}
+.c{max-width:440px;margin:0 auto}
+h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
+.s{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.s h2{font-size:.85em;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+#timer{font-size:3em;font-family:'SF Mono',monospace;text-align:center;display:block;padding:6px 0;color:#111;font-weight:bold}
+#btnStart{display:block;width:100%;padding:14px;border:none;border-radius:10px;background:#2e7d32;color:#fff;font-size:1.15em;font-weight:bold;cursor:pointer;text-align:center;margin-top:6px;-webkit-tap-highlight-color:transparent}
+#btnStart.go{background:#e65100}
+.ti{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:.9em;margin-bottom:6px;-webkit-user-select:text;user-select:text}
+.crow{display:flex;align-items:center;gap:8px;margin-top:6px}
+.crow label{font-size:.8em;color:#777}
+.crow input[type=color]{width:36px;height:28px;border:none;border-radius:6px;padding:0}
+.r{display:flex;align-items:center;gap:3px;margin-bottom:4px}
+.rl{flex:1.2;font-size:.85em;color:#444;font-weight:600}
+.rc{font-family:'SF Mono',monospace;font-size:1.6em;min-width:34px;text-align:center;font-weight:bold;color:#222}
+.bh{background:var(--hc);color:#fff;border:none;border-radius:8px;padding:12px 0;font-size:1em;font-weight:bold;cursor:pointer;flex:.9;-webkit-tap-highlight-color:transparent}
+.ba{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:12px 0;font-size:1em;font-weight:bold;cursor:pointer;flex:.9;-webkit-tap-highlight-color:transparent}
+.bu{background:#eee;color:#999;border:none;border-radius:8px;padding:12px 4px;font-size:.85em;font-weight:bold;cursor:pointer;flex:.5;-webkit-tap-highlight-color:transparent}
+.bu:active{background:#ccc;color:#666}
+.bx{background:#78909c;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:4px}
+.be{background:#1565c0;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:6px}
+.gl{font-size:.7em;color:#999;margin-top:6px;padding-top:4px;border-top:1px solid #f0f0f0}
+.gi{padding:2px 0}
+</style>
+</head>
+<body>
+<div class="c">
+<h1>Football Tracker</h1>
+<div class="s">
+<span id="timer">00:00:00</span>
+<button id="btnStart" type="button" onclick="toggleTimer()">Start</button>
+</div>
+<div class="s">
+<h2>Teams</h2>
+<input class="ti" id="tmH" type="text" placeholder="Heim" oninput="saveNm()">
+<input class="ti" id="tmA" type="text" placeholder="Auswaerts" oninput="saveNm()">
+<div class="crow">
+<label>Heim:</label><input type="color" id="cH" value="#c2185b" onchange="saveCol()">
+<label>Ausw:</label><input type="color" id="cA" value="#1e88e5" onchange="saveCol()">
+</div>
+</div>
+<div class="s">
+<h2>Tore</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hg">0</span><button class="bh" type="button" onclick="cnt('hg',true)">+Tor</button><button class="ba" type="button" onclick="cnt('ag',true)">+Tor</button><button class="bu" type="button" onclick="undo('hg')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="ag">0</span></div>
+<div class="gl" id="gl"></div>
+</div>
+<div class="s">
+<h2>Schuesse a.Tor</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hst">0</span><button class="bh" type="button" onclick="cnt('hst')">+</button><button class="ba" type="button" onclick="cnt('ast')">+</button><button class="bu" type="button" onclick="undo('hst')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="ast">0</span></div>
+</div>
+<div class="s">
+<h2>Schuesse vorbei</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hsb">0</span><button class="bh" type="button" onclick="cnt('hsb')">+</button><button class="ba" type="button" onclick="cnt('asb')">+</button><button class="bu" type="button" onclick="undo('hsb')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="asb">0</span></div>
+</div>
+<div class="s">
+<h2>Ecken</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="he">0</span><button class="bh" type="button" onclick="cnt('he')">+</button><button class="ba" type="button" onclick="cnt('ae')">+</button><button class="bu" type="button" onclick="undo('he')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="ae">0</span></div>
+</div>
+<div class="s">
+<h2>Freistoesse</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hf">0</span><button class="bh" type="button" onclick="cnt('hf')">+</button><button class="ba" type="button" onclick="cnt('af')">+</button><button class="bu" type="button" onclick="undo('hf')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="af">0</span></div>
+</div>
+<div class="s">
+<h2>Gelb</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hy">0</span><button class="bh" type="button" onclick="cnt('hy')">+</button><button class="ba" type="button" onclick="cnt('ay')">+</button><button class="bu" type="button" onclick="undo('hy')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="ay">0</span></div>
+</div>
+<div class="s">
+<h2>Rot</h2>
+<div class="r"><span class="rl lH">Heim</span><span class="rc" id="hr">0</span><button class="bh" type="button" onclick="cnt('hr')">+</button><button class="ba" type="button" onclick="cnt('ar')">+</button><button class="bu" type="button" onclick="undo('hr')">Z</button></div>
+<div class="r"><span class="rl lA">Auswaerts</span><span class="rc" id="ar">0</span></div>
+</div>
+<div class="s">
+<button class="bx" type="button" onclick="resetAll()">Alles zuruecksetzen</button>
+<button class="be" type="button" onclick="exportCSV()">CSV Export</button>
+</div>
+</div>
+<script>
+var timerSec=0,timerOn=false,timerInt=null;
+var counts={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0};
+var goals=[];
+function toggleTimer(){
+var btn=document.getElementById('btnStart');
+if(!timerOn){
+timerOn=true;
+btn.textContent='Stop';
+btn.className='go';
+timerInt=setInterval(function(){timerSec++;showTime();},1000);
+}else{
+timerOn=false;
+btn.textContent='Weiter';
+btn.className='';
+clearInterval(timerInt);
+timerInt=null;
+}
+}
+function showTime(){
+var h=String(Math.floor(timerSec/3600)).padStart(2,'0');
+var m=String(Math.floor((timerSec%3600)/60)).padStart(2,'0');
+var s=String(timerSec%60).padStart(2,'0');
+document.getElementById('timer').textContent=h+':'+m+':'+s;
+}
+function cnt(id,isGoal){
+counts[id]++;
+document.getElementById(id).textContent=counts[id];
+if(isGoal)logGoal(id);
+save();
+}
+function undo(id){
+if(counts[id]>0){
+counts[id]--;
+document.getElementById(id).textContent=counts[id];
+if(id==='hg'||id==='ag'){if(goals.length>0){goals.pop();renderGoals();}}
+save();
+}
+}
+function logGoal(id){
+var h=String(Math.floor(timerSec/3600)).padStart(2,'0');
+var m=String(Math.floor((timerSec%3600)/60)).padStart(2,'0');
+var s=String(timerSec%60).padStart(2,'0');
+var t=h+':'+m+':'+s;
+var team=(id==='hg')?(document.getElementById('tmH').value||'Heim'):(document.getElementById('tmA').value||'Auswaerts');
+goals.push({time:t,team:team,num:counts[id]});
+renderGoals();
+}
+function renderGoals(){
+var html='';
+for(var i=0;i<goals.length;i++){
+html+='<div class="gi">'+goals[i].time+' - '+goals[i].team+' (Tor '+goals[i].num+')</div>';
+}
+document.getElementById('gl').innerHTML=html;
+}
+function save(){
+try{localStorage.setItem('ft_c',JSON.stringify(counts));localStorage.setItem('ft_g',JSON.stringify(goals));}catch(e){}
+}
+function saveNm(){
+updateLabels();
+try{localStorage.setItem('ft_h',document.getElementById('tmH').value);localStorage.setItem('ft_a',document.getElementById('tmA').value);}catch(e){}
+}
+function saveCol(){
+applyColors();
+try{localStorage.setItem('ft_ch',document.getElementById('cH').value);localStorage.setItem('ft_ca',document.getElementById('cA').value);}catch(e){}
+}
+function applyColors(){
+document.documentElement.style.setProperty('--hc',document.getElementById('cH').value);
+document.documentElement.style.setProperty('--ac',document.getElementById('cA').value);
+}
+function updateLabels(){
+var hh=document.getElementById('tmH').value||'Heim';
+var aa=document.getElementById('tmA').value||'Auswaerts';
+var eH=document.querySelectorAll('.lH');
+var eA=document.querySelectorAll('.lA');
+for(var i=0;i<eH.length;i++)eH[i].textContent=hh;
+for(var i=0;i<eA.length;i++)eA[i].textContent=aa;
+}
+function resetAll(){
+if(!confirm('Wirklich alles zuruecksetzen?'))return;
+timerSec=0;timerOn=false;clearInterval(timerInt);timerInt=null;
+counts={hg:0,ag:0,hst:0,ast:0,hsb:0,asb:0,he:0,ae:0,hf:0,af:0,hy:0,ay:0,hr:0,ar:0};
+goals=[];
+var keys=['hg','ag','hst','ast','hsb','asb','he','ae','hf','af','hy','ay','hr','ar'];
+for(var i=0;i<keys.length;i++){document.getElementById(keys[i]).textContent='0';}
+document.getElementById('timer').textContent='00:00:00';
+document.getElementById('btnStart').textContent='Start';
+document.getElementById('btnStart').className='';
+document.getElementById('gl').innerHTML='';
+save();
+}
+function exportCSV(){
+var hN=document.getElementById('tmH').value||'Heim';
+var aN=document.getElementById('tmA').value||'Auswaerts';
+var nl='\n';
+var csv='Kategorie,'+hN+','+aN+nl;
+csv+='Tore,'+counts.hg+','+counts.ag+nl;
+csv+='Schuesse a.Tor,'+counts.hst+','+counts.ast+nl;
+csv+='Schuesse vorbei,'+counts.hsb+','+counts.asb+nl;
+csv+='Ecken,'+counts.he+','+counts.ae+nl;
+csv+='Freistoesse,'+counts.hf+','+counts.af+nl;
+csv+='Gelb,'+counts.hy+','+counts.ay+nl;
+csv+='Rot,'+counts.hr+','+counts.ar+nl+nl;
+csv+='Tor-Protokoll:'+nl;
+csv+='Zeit,Team,Tor-Nr'+nl;
+for(var i=0;i<goals.length;i++){csv+=goals[i].time+','+goals[i].team+','+goals[i].num+nl;}
+var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+var link=document.createElement('a');
+link.href=URL.createObjectURL(blob);
+var d=new Date();
+link.download='spiel_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'.csv';
+document.body.appendChild(link);link.click();document.body.removeChild(link);
+URL.revokeObjectURL(link.href);
+}
+function load(){
+try{
+var sc=localStorage.getItem('ft_c');
+if(sc){counts=JSON.parse(sc);for(var k in counts){var el=document.getElementById(k);if(el)el.textContent=counts[k];}}
+var sg=localStorage.getItem('ft_g');
+if(sg){goals=JSON.parse(sg);renderGoals();}
+var hn=localStorage.getItem('ft_h');if(hn)document.getElementById('tmH').value=hn;
+var an=localStorage.getItem('ft_a');if(an)document.getElementById('tmA').value=an;
+var ch=localStorage.getItem('ft_ch');if(ch)document.getElementById('cH').value=ch;
+var ca=localStorage.getItem('ft_ca');if(ca)document.getElementById('cA').value=ca;
+}catch(e){}
+applyColors();updateLabels();
+}
+load();
+</script>
+</body>
+</html>
