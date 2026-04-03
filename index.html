@@ -24,12 +24,11 @@ h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
 .cr label{font-size:.8em;color:#777}
 .cr input[type=color]{width:36px;height:28px;border:none;border-radius:6px}
 .tmr{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:6px}
-.rw{display:flex;align-items:center;gap:4px;margin-bottom:2px;flex-wrap:nowrap}
-.rl{flex:1;font-size:.9em;color:#444;font-weight:600;white-space:nowrap}
+.rw{display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:nowrap}
 .rc{font-family:monospace;font-size:1.4em;min-width:28px;text-align:center;font-weight:bold;color:#222;line-height:1;vertical-align:middle}
-.bh{background:var(--hc);color:#fff;border:none;border-radius:6px;padding:8px 6px;font-size:.95em;font-weight:bold;cursor:pointer;flex:none;min-width:48px}
-.ba{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:12px 0;font-size:1em;font-weight:bold;cursor:pointer;flex:.9}
-.bu{background:#eee;color:#999;border:none;border-radius:6px;padding:7px 0;font-size:.9em;font-weight:bold;cursor:pointer;width:50%;margin:3px auto;display:block}
+.bh,.ba{background:var(--hc);color:#fff;border:none;border-radius:6px;padding:10px 12px;font-size:1em;font-weight:bold;cursor:pointer;flex:none;min-width:44px;height:36px}
+.ba{background:var(--ac)}
+.bu{background:#eee;color:#999;border:none;border-radius:6px;padding:6px 0;font-size:.8em;font-weight:bold;cursor:pointer;width:40%;margin:2px auto;display:block}
 .bu:active{background:#ccc;color:#666}
 .bx{background:#78909c;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:4px}
 .be{background:#1565c0;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:bold;cursor:pointer;width:100%;margin-top:6px}
@@ -55,32 +54,25 @@ h1{text-align:center;font-size:1.3em;margin:8px 0 16px;color:#333}
 <div class="cr"><label>Heim:</label><input type="color" id="cH" value="#c2185b" onchange="sC()"><label>Ausw:</label><input type="color" id="cA" value="#1e88e5" onchange="sC()"></div>
 </div>
 <div class="sec"><h2>Tore</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hg">0</span><button class="bh" type="button" onclick="c('hg',1)">+Tor</button><button class="ba" type="button" onclick="c('ag',1)">+Tor</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="ag">0</span></div>
+<div class="rw"><span class="rc" id="hg">0</span><button class="bh" type="button" onclick="c('hg',1)">+</button><button class="ba" type="button" onclick="c('ag',1)">+</button><span class="rc" id="ag">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button><div class="gl" id="gl"></div></div>
 <div class="sec"><h2>Schuesse a.Tor</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hst">0</span><button class="bh" type="button" onclick="c('hst')">+</button><button class="ba" type="button" onclick="c('ast')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="ast">0</span></div>
+<div class="rw"><span class="rc" id="hst">0</span><button class="bh" type="button" onclick="c('hst')">+</button><button class="ba" type="button" onclick="c('ast')">+</button><span class="rc" id="ast">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Schuesse vorbei</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hsb">0</span><button class="bh" type="button" onclick="c('hsb')">+</button><button class="ba" type="button" onclick="c('asb')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="asb">0</span></div>
+<div class="rw"><span class="rc" id="hsb">0</span><button class="bh" type="button" onclick="c('hsb')">+</button><button class="ba" type="button" onclick="c('asb')">+</button><span class="rc" id="asb">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Ecken</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="he">0</span><button class="bh" type="button" onclick="c('he')">+</button><button class="ba" type="button" onclick="c('ae')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="ae">0</span></div>
+<div class="rw"><span class="rc" id="he">0</span><button class="bh" type="button" onclick="c('he')">+</button><button class="ba" type="button" onclick="c('ae')">+</button><span class="rc" id="ae">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Freistoesse</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hf">0</span><button class="bh" type="button" onclick="c('hf')">+</button><button class="ba" type="button" onclick="c('af')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="af">0</span></div>
+<div class="rw"><span class="rc" id="hf">0</span><button class="bh" type="button" onclick="c('hf')">+</button><button class="ba" type="button" onclick="c('af')">+</button><span class="rc" id="af">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Gelb</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hy">0</span><button class="bh" type="button" onclick="c('hy')">+</button><button class="ba" type="button" onclick="c('ay')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="ay">0</span></div>
+<div class="rw"><span class="rc" id="hy">0</span><button class="bh" type="button" onclick="c('hy')">+</button><button class="ba" type="button" onclick="c('ay')">+</button><span class="rc" id="ay">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec"><h2>Rot</h2>
-<div class="rw"><span class="rl lH">Heim</span><span class="rc" id="hr">0</span><button class="bh" type="button" onclick="c('hr')">+</button><button class="ba" type="button" onclick="c('ar')">+</button></div>
-<div class="rw"><span class="rl lA">Auswaerts</span><span class="rc" id="ar">0</span></div>
+<div class="rw"><span class="rc" id="hr">0</span><button class="bh" type="button" onclick="c('hr')">+</button><button class="ba" type="button" onclick="c('ar')">+</button><span class="rc" id="ar">0</span></div>
 <button class="bu" type="button" onclick="uZ()">&#8617; Undo</button></div>
 <div class="sec">
 <button class="bx" type="button" onclick="rA()">Alles zuruecksetzen</button>
