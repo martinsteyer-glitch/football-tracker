@@ -12,14 +12,8 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title><span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span></title>
+<title>Football Tracker</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js">
-
-
-function setActiveTab(tab){
-  document.querySelectorAll('.navLabel').forEach(el=>el.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
-}
 
 </script>
 <style>
@@ -32,9 +26,9 @@ body{
   min-height:100vh;-webkit-user-select:none;user-select:none;
 }
 .c{max-width:520px;margin:0 auto}
-.nav{display:flex;gap:8px;margin-bottom:10px}
-.nav button{flex:1;padding:12px;border:none;border-radius:10px;background:rgba(0,0,0,.46);color:#fff;font-weight:700;cursor:pointer}
-.nav button.active{background:rgba(0,0,0,.4)}
+
+
+
 .page{display:none}.page.active{display:block}
 .sec{padding:4px 0 5px;margin-bottom:2px}
 .box,.sec h2,#timer,#nsLabel,.tmr label,.log,.subtle,.seasonHead{background:rgba(0,0,0,.42);border-radius:8px}
@@ -45,17 +39,20 @@ body{
 
 
 
+
 #htLabel{
   display:inline-block;
+  text-align:left;
   background: rgba(0,0,0,.48);
   padding:6px 10px;
   border-radius:8px;
   font-size:.85em;
-  color:#ffffff !important;
+  color:#ffffff;
   text-transform:uppercase;
   letter-spacing:.5px;
   font-weight:700;
 }
+
 
 
 
@@ -137,17 +134,45 @@ body{
 
 
 
-.navLabel{font-size:1.1em !important;color:#888;text-transform:uppercase;letter-spacing:.5px;font-weight:normal;background:transparent !important;padding:4px 8px;border-radius:8px}
-.navLabel.active{color:#ffffff !important;background: transparent !important;padding:4px 8px}
+
+
+
+
+.nav{display:flex;gap:8px;margin-bottom:10px}
+.nav button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  color:inherit;
+  font-weight:700;
+  cursor:pointer;
+}
+.nav button.active{
+  background:transparent;
+}
+.navLabel{
+  font-size:1.1em;
+  color:rgba(255,255,255,.45);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  font-weight:700;
+  background:transparent;
+  padding:0;
+}
+.nav button.active .navLabel{
+  color:#ffffff;
+}
 
 </style>
 </head>
 <body>
 <div class="c">
   <div class="nav">
-    <button id="tabBtn_spieltag" class="active" onclick="showPage('spieltag')"><span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span></button>
-    <button id="tabBtn_team" onclick="showPage('team')"><span class="navLabel" id="tab_team" onclick="setActiveTab('tab_team')" >Mein Team</span></button>
-    <button id="tabBtn_saison" onclick="showPage('saison')"><span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span></button>
+    <button id="tabBtn_spieltag" class="active" onclick="showPage('spieltag')"><span class="navLabel">Spieltag</span></button>
+    <button id="tabBtn_team" onclick="showPage('team')"><span class="navLabel">Mein Team</span></button>
+    <button id="tabBtn_saison" onclick="showPage('saison')"><span class="navLabel">Saison</span></button>
   </div>
 
   <section id="page_spieltag" class="page active">
@@ -189,7 +214,7 @@ body{
 
   <section id="page_team" class="page">
     <div class="sec">
-      <h2><span class="navLabel" id="tab_team" onclick="setActiveTab('tab_team')" >Mein Team</span></h2>
+      <h2><span class="navLabel">Mein Team</span></h2>
       <div class="subtle">.</div>
       <table class="teamTable">
         <thead><tr><th>Nr.</th><th>Name</th></tr></thead>
@@ -201,11 +226,11 @@ body{
 
   <section id="page_saison" class="page">
     <div class="sec">
-      <h2><span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span></h2>
-      <div class="subtle">Hier werden alle gespeicherten <span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span>e zusammengefasst.</div>
+      <h2><span class="navLabel">Saison</span></h2>
+      <div class="subtle">Hier werden alle gespeicherten <span class="navLabel">Spieltag</span>e zusammengefasst.</div>
       <div id="seasonSummary"></div>
-      <button class="actionBtn gray" type="button" onclick="archiveCurrentMatch()">Aktuellen <span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span> zur <span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span> hinzufügen</button>
-      <button class="actionBtn gray" type="button" onclick="clearSeason()"><span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span> zurücksetzen</button>
+      <button class="actionBtn gray" type="button" onclick="archiveCurrentMatch()">Aktuellen <span class="navLabel">Spieltag</span> zur <span class="navLabel">Saison</span> hinzufügen</button>
+      <button class="actionBtn gray" type="button" onclick="clearSeason()"><span class="navLabel">Saison</span> zurücksetzen</button>
     </div>
   </section>
 </div>
@@ -393,12 +418,12 @@ function playerStatsFromLogs(matchLogs, playerList, matchAway){
 }
 
 function currentMatchSnapshot(){refreshTimeState();savePlayers(false);return {createdAt:new Date().toISOString(),home:homeName(),away:awayName(),hm,h1T,h1NS,h2T,h2NS,counters:JSON.parse(JSON.stringify(cs)),logs:JSON.parse(JSON.stringify(logs)),players:JSON.parse(JSON.stringify(players))};}
-function archiveCurrentMatch(){const snap=currentMatchSnapshot();const list=JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]');list.push(snap);localStorage.setItem(MATCH_HISTORY_KEY,JSON.stringify(list));renderSeason();alert('<span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span> zur <span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span> hinzugefügt.');}
-function clearSeason(){if(!confirm('<span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span> wirklich zurücksetzen?'))return;localStorage.removeItem(MATCH_HISTORY_KEY);renderSeason();}
+function archiveCurrentMatch(){const snap=currentMatchSnapshot();const list=JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]');list.push(snap);localStorage.setItem(MATCH_HISTORY_KEY,JSON.stringify(list));renderSeason();alert('<span class="navLabel">Spieltag</span> zur <span class="navLabel">Saison</span> hinzugefügt.');}
+function clearSeason(){if(!confirm('<span class="navLabel">Saison</span> wirklich zurücksetzen?'))return;localStorage.removeItem(MATCH_HISTORY_KEY);renderSeason();}
 
 function renderSeason(){
   const host=document.getElementById('seasonSummary'); const matches=JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]');
-  if(!matches.length){host.innerHTML='<div class="subtle">Noch keine Spiele in der <span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span> gespeichert.</div>';return;}
+  if(!matches.length){host.innerHTML='<div class="subtle">Noch keine Spiele in der <span class="navLabel">Saison</span> gespeichert.</div>';return;}
   const totals={};
   matches.forEach(m=>{
     playerStatsFromLogs(m.logs,m.players,m.away).forEach(r=>{
@@ -406,7 +431,7 @@ function renderSeason(){
       else ['Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls'].forEach(k=>totals[r.number][k]+=r[k]);
     });
   });
-  let html=`<div class="seasonCard"><div class="seasonHead">Spiele in der <span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span>: <strong>${matches.length}</strong></div>`;
+  let html=`<div class="seasonCard"><div class="seasonHead">Spiele in der <span class="navLabel">Saison</span>: <strong>${matches.length}</strong></div>`;
   matches.forEach((m,i)=>html+=`<div class="subtle" style="margin-bottom:6px">${i+1}. ${m.home} - ${m.away}</div>`);
   html+=`<div style="overflow:auto"><table class="seasonGrid"><thead><tr><th>Nr.</th><th>Name</th><th>Tore</th><th>Schüsse aufs Tor</th><th>Schüsse vorbei</th><th>Gelbe Karten</th><th>Rote Karten</th><th>Elfmeter</th><th>Fouls</th></tr></thead><tbody>`;
   Object.values(totals).sort((a,b)=>Number(a.number)-Number(b.number)).forEach(r=>{html+=`<tr><td>${r.number}</td><td class="name">${r.name||''}</td><td>${r['Tore']}</td><td>${r['Schüsse aufs Tor']}</td><td>${r['Schüsse vorbei']}</td><td>${r['Gelbe Karten']}</td><td>${r['Rote Karten']}</td><td>${r['Elfmeter']}</td><td>${r['Fouls']}</td></tr>`;});
@@ -417,7 +442,7 @@ function exportWorkbook(){
   savePlayers(false);
   const snap=currentMatchSnapshot(), wb=XLSX.utils.book_new();
   const gegentore = snap.counters.ag||0;
-  const spieltag=[['<span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span>',''],['Heimmannschaft',snap.home],['Auswärtsmannschaft',snap.away],['Reguläre Spielzeit pro Halbzeit',ft2(snap.hm*60)],['1. Halbzeit regulär',ft2(snap.h1T)],['1. Halbzeit Nachspielzeit',ft2(snap.h1NS)],['2. Halbzeit regulär',ft2(snap.h2T)],['2. Halbzeit Nachspielzeit',ft2(snap.h2NS)],['',''],['Kategorie','Wert'],['Gegentore',gegentore]];
+  const spieltag=[['<span class="navLabel">Spieltag</span>',''],['Heimmannschaft',snap.home],['Auswärtsmannschaft',snap.away],['Reguläre Spielzeit pro Halbzeit',ft2(snap.hm*60)],['1. Halbzeit regulär',ft2(snap.h1T)],['1. Halbzeit Nachspielzeit',ft2(snap.h1NS)],['2. Halbzeit regulär',ft2(snap.h2T)],['2. Halbzeit Nachspielzeit',ft2(snap.h2NS)],['',''],['Kategorie','Wert'],['Gegentore',gegentore]];
   STAT_DEFS.forEach(s=>{spieltag.push([s.title+' Heim',snap.counters[s.homeId]||0]);spieltag.push([s.title+' Auswärts',snap.counters[s.awayId]||0]);});
   spieltag.push(['',''],['Dokumentierte Ereignisse','']);
   STAT_DEFS.forEach(s=>{
@@ -441,11 +466,11 @@ function exportWorkbook(){
     spieltag.push(['Zeitpunkt','Beschreibung']);
     snap.logs.substitutions.forEach(item=>spieltag.push([item.t, `${displayPlayer(item.out)} → ${displayPlayer(item.in)}`]));
   }
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(spieltag),'<span class="navLabel active" id="tab_spieltag" onclick="setActiveTab('tab_spieltag')" >Spieltag</span>');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(spieltag),'<span class="navLabel">Spieltag</span>');
 
   const teamRows=[['Nr.','Name','Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls']];
   playerStatsFromLogs(snap.logs,snap.players,snap.away).forEach(r=>teamRows.push([r.number,r.name,r['Tore'],r['Schüsse aufs Tor'],r['Schüsse vorbei'],r['Gelbe Karten'],r['Rote Karten'],r['Elfmeter'],r['Fouls']]));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(teamRows),'<span class="navLabel" id="tab_team" onclick="setActiveTab('tab_team')" >Mein Team</span>');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(teamRows),'<span class="navLabel">Mein Team</span>');
 
   const seasonRows=[['Nr.','Name','Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls']];
   const totals={};
@@ -456,7 +481,7 @@ function exportWorkbook(){
     });
   });
   Object.values(totals).sort((a,b)=>Number(a.number)-Number(b.number)).forEach(r=>seasonRows.push([r.number,r.name,r['Tore'],r['Schüsse aufs Tor'],r['Schüsse vorbei'],r['Gelbe Karten'],r['Rote Karten'],r['Elfmeter'],r['Fouls']]));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(seasonRows),'<span class="navLabel" id="tab_saison" onclick="setActiveTab('tab_saison')" >Saison</span>');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(seasonRows),'<span class="navLabel">Saison</span>');
   XLSX.writeFile(wb,'spieltag_export.xlsx');
 }
 
@@ -491,12 +516,6 @@ uT(); startUITicker(); renderSeason();
 window.addEventListener('beforeunload',()=>{savePlayers(false);saveState();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){savePlayers(false);saveState();}});
 
-
-
-function setActiveTab(tab){
-  document.querySelectorAll('.navLabel').forEach(el=>el.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
-}
 
 </script>
 
