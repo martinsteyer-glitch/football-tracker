@@ -31,19 +31,25 @@ body{
 #btnStart{background:#2e7d32} #btnStart.run{background:#e65100} #btnStart.pau{background:#1976d2} #btnStart.ns{background:#d32f2f} #btnStart.next{background:#6a1b9a} #btnStart.done{background:#455a64}
 .actionBtn.gray{background:#78909c}.actionBtn.blue{background:#1565c0}
 .teamRow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.ti,.tm,.playerName,.playerNo{padding:10px;border:1px solid rgba(255,255,255,.35);border-radius:8px;background:rgba(255,255,255,.92);font-size:.95em;color:#111}
+.ti,.tm,.playerName,.playerNo,.quickNo{padding:10px;border:1px solid rgba(255,255,255,.35);border-radius:8px;background:rgba(255,255,255,.92);font-size:.95em;color:#111}
 .ti,.playerName{flex:1}.tc{width:42px;height:40px;border:none;border-radius:8px;background:#fff;cursor:pointer}.tm{width:90px;text-align:center;font-weight:700}
+.quickNo{width:92px;text-align:center;font-weight:700;padding:8px 6px}
 .tmr{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:4px}.tmr label{padding:4px 8px}
 .rw{display:flex;align-items:center;justify-content:center;gap:8px}
 .rc{min-width:56px;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.48);font:700 2.05em monospace;text-align:center}
 .bh,.ba{border:none;border-radius:8px;padding:10px 24px;font-size:1.15em;font-weight:700;cursor:pointer;min-width:88px;height:46px;color:#fff}
 .bh{background:var(--hc)} .ba{background:var(--ac)}
 .log{font-size:.78em;margin-top:4px;padding:4px 8px;border-top:1px solid rgba(255,255,255,.25)} .log:empty{display:none}
-.teamTable{width:100%;border-collapse:separate;border-spacing:0 6px}.teamTable th{padding:8px 6px;font-size:.85em}.playerNo{width:72px;text-align:center;font-weight:700}
+.teamTable{width:100%;border-collapse:separate;border-spacing:0 6px} .teamTable th{padding:8px 6px;font-size:.85em} .playerNo{width:72px;text-align:center;font-weight:700}
 .subtle{padding:8px 10px;margin-bottom:8px;font-size:.9em;line-height:1.35}
 .seasonCard{background:rgba(0,0,0,.28);padding:10px;border-radius:12px;margin-bottom:8px}
 .seasonHead{padding:6px 8px;margin-bottom:8px;display:inline-block}
-.hd{display:none}
+.seasonGrid{width:100%;border-collapse:collapse;background:rgba(0,0,0,.22)}
+.seasonGrid th,.seasonGrid td{border:1px solid rgba(255,255,255,.75);padding:6px 8px;text-align:center}
+.seasonGrid th{background:rgba(0,0,0,.42)}
+.seasonGrid td.name{text-align:left}
+.swapRow{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:4px;flex-wrap:wrap}
+.swapArrow{font-weight:700;background:rgba(0,0,0,.42);padding:8px 10px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -70,6 +76,17 @@ body{
     </div>
 
     <div id="statsWrap"></div>
+
+    <div class="sec">
+      <h2>Auswechslung</h2>
+      <div class="swapRow">
+        <input class="quickNo" id="swapOut" type="number" placeholder="Raus" inputmode="numeric">
+        <div class="swapArrow">→</div>
+        <input class="quickNo" id="swapIn" type="number" placeholder="Rein" inputmode="numeric">
+      </div>
+      <button class="actionBtn gray" type="button" onclick="addSubstitution()">Auswechslung speichern</button>
+      <div class="log" id="log_substitutions"></div>
+    </div>
 
     <div class="sec">
       <button class="actionBtn gray" type="button" onclick="uZ()">Letzte Aktion rückgängig</button>
@@ -102,24 +119,26 @@ body{
 </div>
 
 <script>
-const STORAGE_KEY='footballTrackerV16';
-const MATCH_HISTORY_KEY='footballTrackerSeasonV16';
-const TEAM_NAMES_KEY='footballTrackerTeamNamesV16';
+const STORAGE_KEY='footballTrackerV18';
+const MATCH_HISTORY_KEY='footballTrackerSeasonV18';
+const TEAM_NAMES_KEY='footballTrackerTeamNamesV18';
 const STAT_DEFS=[
-  {key:'goals',title:'Tore',homeId:'hg',awayId:'ag',askPlayer:true},
-  {key:'shotsOnTarget',title:'Schüsse aufs Tor',homeId:'hst',awayId:'ast',askPlayer:true},
-  {key:'shotsOffTarget',title:'Schüsse vorbei',homeId:'hsb',awayId:'asb',askPlayer:true},
-  {key:'corners',title:'Ecken',homeId:'he',awayId:'ae',askPlayer:false},
-  {key:'freeKicks',title:'Freistöße',homeId:'hf',awayId:'af',askPlayer:false},
-  {key:'yellow',title:'Gelbe Karten',homeId:'hy',awayId:'ay',askPlayer:true},
-  {key:'red',title:'Rote Karten',homeId:'hr',awayId:'ar',askPlayer:true},
-  {key:'penalties',title:'Elfmeter',homeId:'hep',awayId:'aep',askPlayer:true},
-  {key:'offsides',title:'Abseits',homeId:'hab',awayId:'aab',askPlayer:false},
-  {key:'fouls',title:'Fouls',homeId:'hfo',awayId:'afo',askPlayer:true}
+  {key:'goals',title:'Tore',homeId:'hg',awayId:'ag',askPlayer:'homeOnly'},
+  {key:'shotsOnTarget',title:'Schüsse aufs Tor',homeId:'hst',awayId:'ast',askPlayer:'both'},
+  {key:'shotsOffTarget',title:'Schüsse vorbei',homeId:'hsb',awayId:'asb',askPlayer:'both'},
+  {key:'corners',title:'Ecken',homeId:'he',awayId:'ae',askPlayer:'none'},
+  {key:'freeKicks',title:'Freistöße',homeId:'hf',awayId:'af',askPlayer:'none'},
+  {key:'yellow',title:'Gelbe Karten',homeId:'hy',awayId:'ay',askPlayer:'both'},
+  {key:'red',title:'Rote Karten',homeId:'hr',awayId:'ar',askPlayer:'both'},
+  {key:'penalties',title:'Elfmeter',homeId:'hep',awayId:'aep',askPlayer:'both'},
+  {key:'offsides',title:'Abseits',homeId:'hab',awayId:'aab',askPlayer:'none'},
+  {key:'fouls',title:'Fouls',homeId:'hfo',awayId:'afo',askPlayer:'both'}
 ];
 const ALL=STAT_DEFS.flatMap(s=>[s.homeId,s.awayId]);
 let mo='idle',tI=null,sec=0,hm=45,hn=1,nsS=0,h1T=0,h2T=0,h1NS=0,h2NS=0,runStartedAt=null,nsStartedAt=null,cs={},hist=[],logs={},players=[];
-ALL.forEach(id=>cs[id]=0); STAT_DEFS.forEach(s=>logs[s.key]=[]);
+ALL.forEach(id=>cs[id]=0);
+STAT_DEFS.forEach(s=>logs[s.key]=[]);
+logs.substitutions=[];
 
 function initPlayers(){players=[];for(let i=1;i<=12;i++)players.push({number:String(i),name:''});}
 function homeName(){return document.getElementById('tH').value||'Heim'}
@@ -147,7 +166,7 @@ function buildStats(){
   const wrap=document.getElementById('statsWrap'); wrap.innerHTML='';
   STAT_DEFS.forEach(s=>{
     const d=document.createElement('div'); d.className='sec';
-    d.innerHTML=`<h2>${s.title}</h2><div class="rw"><span class="rc" id="${s.homeId}">0</span><button class="bh" onclick="addStat('${s.homeId}','${s.key}',${s.askPlayer})">+</button><button class="ba" onclick="addStat('${s.awayId}','${s.key}',${s.askPlayer})">+</button><span class="rc" id="${s.awayId}">0</span></div><div class="log" id="log_${s.key}"></div>`;
+    d.innerHTML=`<h2>${s.title}</h2><div class="rw"><span class="rc" id="${s.homeId}">0</span><button class="bh" onclick="addStat('${s.homeId}','${s.key}','${s.askPlayer}')">+</button><button class="ba" onclick="addStat('${s.awayId}','${s.key}','${s.askPlayer}')">+</button><span class="rc" id="${s.awayId}">0</span></div><div class="log" id="log_${s.key}"></div>`;
     wrap.appendChild(d);
   });
 }
@@ -185,23 +204,47 @@ function setButton(text,cls){const b=document.getElementById('btnStart');b.textC
 function renderLogs(){
   STAT_DEFS.forEach(s=>{
     const el=document.getElementById('log_'+s.key);
-    el.innerHTML=logs[s.key].map(item=>`<div class="logItem">${item.t} - ${item.team}${item.player?' - '+displayPlayer(item.player):''}</div>`).join('');
+    el.innerHTML=logs[s.key].map(item=>{
+      const txt=item.player ? ' - '+(item.team===awayName() && s.key==='goals' ? '#'+item.player : displayPlayer(item.player)) : '';
+      return `<div class="logItem">${item.t} - ${item.team}${txt}</div>`;
+    }).join('');
   });
+  document.getElementById('log_substitutions').innerHTML = logs.substitutions.map(item=>`<div class="logItem">${item.t} - ${displayPlayer(item.out)} → ${displayPlayer(item.in)}</div>`).join('');
 }
 
-function addStat(id,category,askPlayer){
+function askPlayerFor(id, mode){
+  if(mode==='none') return '';
+  const home = isHome(id);
+  if(mode==='homeOnly' && !home) return (prompt('Gegnerische Spielernummer:')||'').trim();
+  return (prompt('Spielernummer '+(home?'Heim':'Auswärts')+':')||'').trim();
+}
+
+function addStat(id,category,askMode){
   refreshTimeState(); cs[id]++; document.getElementById(id).textContent=cs[id];
   const rec={kind:'counter',id,category,logAdded:false};
-  if(askPlayer){
-    let player=(prompt('Spielernummer '+(isHome(id)?'Heim':'Auswärts')+':')||'').trim();
+  const player = askPlayerFor(id, askMode);
+  if(askMode!=='none'){
     logs[category].push({t:getDisplayTimeForEvent(),team:isHome(id)?homeName():awayName(),player});
     rec.logAdded=true;
   }
   hist.push(rec); renderLogs(); saveState();
 }
+
+function addSubstitution(){
+  const outNo=(document.getElementById('swapOut').value||'').trim();
+  const inNo=(document.getElementById('swapIn').value||'').trim();
+  if(!outNo || !inNo) return;
+  logs.substitutions.push({t:getDisplayTimeForEvent(),out:outNo,in:inNo});
+  hist.push({kind:'substitution'});
+  document.getElementById('swapOut').value='';
+  document.getElementById('swapIn').value='';
+  renderLogs(); saveState();
+}
+
 function uZ(){
   refreshTimeState(); if(!hist.length) return;
   const last=hist.pop();
+  if(last.kind==='substitution'){ if(logs.substitutions.length) logs.substitutions.pop(); renderLogs(); saveState(); return; }
   if(last.kind==='counter'&&cs[last.id]>0){cs[last.id]--;document.getElementById(last.id).textContent=cs[last.id];if(last.logAdded&&logs[last.category].length)logs[last.category].pop();}
   renderLogs(); saveState();
 }
@@ -235,14 +278,18 @@ function finishPeriod(){refreshTimeState();stopTicker();if(mo==='ns'&&nsStartedA
 function startHalf(halfNo){hn=halfNo;sec=0;nsS=0;runStartedAt=nowSec();nsStartedAt=null;mo='run';document.getElementById('tRow').classList.add('hd');uT();startUITicker();saveState();}
 function tA(){refreshTimeState();if(mo==='idle'){hm=parseInt(document.getElementById('hM').value,10)||45;if(hm<1)hm=45;document.getElementById('hM').value=hm;h1T=0;h2T=0;h1NS=0;h2NS=0;startHalf(1);return;}if(mo==='run'){sec=getRegElapsed();runStartedAt=null;mo='pau';uT();stopTicker();saveState();return;}if(mo==='pau'){runStartedAt=nowSec();mo='run';uT();startUITicker();saveState();return;}if(mo==='ns'){finishPeriod();return;}if(mo==='break'){startHalf(2);return;}}
 
-function resetMatchData(){mo='idle';tI=null;sec=0;hm=45;hn=1;nsS=0;h1T=0;h2T=0;h1NS=0;h2NS=0;runStartedAt=null;nsStartedAt=null;hist=[];ALL.forEach(id=>cs[id]=0);STAT_DEFS.forEach(s=>logs[s.key]=[]);}
+function resetMatchData(){
+  mo='idle';tI=null;sec=0;hm=45;hn=1;nsS=0;h1T=0;h2T=0;h1NS=0;h2NS=0;runStartedAt=null;nsStartedAt=null;hist=[];
+  ALL.forEach(id=>cs[id]=0); STAT_DEFS.forEach(s=>logs[s.key]=[]); logs.substitutions=[];
+}
 function rA(){stopTicker();resetMatchData();ALL.forEach(id=>document.getElementById(id).textContent='0');document.getElementById('hM').value='45';document.getElementById('tRow').classList.remove('hd');renderLogs();uT();saveState();}
 
-function playerStatsFromLogs(matchLogs, playerList){
+function playerStatsFromLogs(matchLogs, playerList, matchAway){
   const result={}, map={goals:'Tore',shotsOnTarget:'Schüsse aufs Tor',shotsOffTarget:'Schüsse vorbei',yellow:'Gelbe Karten',red:'Rote Karten',penalties:'Elfmeter',fouls:'Fouls'};
   (playerList||players).forEach(p=>{const no=String(p.number||'').trim();if(no)result[no]={number:no,name:p.name||'',Tore:0,'Schüsse aufs Tor':0,'Schüsse vorbei':0,'Gelbe Karten':0,'Rote Karten':0,Elfmeter:0,Fouls:0};});
   Object.entries(map).forEach(([cat,label])=>{
     (matchLogs[cat]||[]).forEach(item=>{
+      if(cat==='goals' && item.team===matchAway) return;
       const no=String(item.player||'').trim(); if(!no) return;
       if(!result[no]) result[no]={number:no,name:'',Tore:0,'Schüsse aufs Tor':0,'Schüsse vorbei':0,'Gelbe Karten':0,'Rote Karten':0,Elfmeter:0,Fouls:0};
       result[no][label]++;
@@ -258,44 +305,62 @@ function clearSeason(){if(!confirm('Saison wirklich zurücksetzen?'))return;loca
 function renderSeason(){
   const host=document.getElementById('seasonSummary'); const matches=JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]');
   if(!matches.length){host.innerHTML='<div class="subtle">Noch keine Spiele in der Saison gespeichert.</div>';return;}
-  const totals={}, map={goals:'Tore',shotsOnTarget:'Schüsse aufs Tor',shotsOffTarget:'Schüsse vorbei',yellow:'Gelbe Karten',red:'Rote Karten',penalties:'Elfmeter',fouls:'Fouls'};
+  const totals={};
   matches.forEach(m=>{
-    const nameMap={}; (m.players||[]).forEach(p=>nameMap[String(p.number)]=p.name||'');
-    Object.entries(map).forEach(([cat,label])=>{
-      (m.logs[cat]||[]).forEach(item=>{
-        const no=String(item.player||'').trim(); if(!no) return;
-        if(!totals[no]) totals[no]={number:no,name:nameMap[no]||'',Tore:0,'Schüsse aufs Tor':0,'Schüsse vorbei':0,'Gelbe Karten':0,'Rote Karten':0,Elfmeter:0,Fouls:0};
-        totals[no][label]++;
-      });
+    playerStatsFromLogs(m.logs,m.players,m.away).forEach(r=>{
+      if(!totals[r.number]) totals[r.number]={...r};
+      else ['Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls'].forEach(k=>totals[r.number][k]+=r[k]);
     });
   });
   let html=`<div class="seasonCard"><div class="seasonHead">Spiele in der Saison: <strong>${matches.length}</strong></div>`;
   matches.forEach((m,i)=>html+=`<div class="subtle" style="margin-bottom:6px">${i+1}. ${m.home} - ${m.away}</div>`);
-  html+=`<div style="overflow:auto"><table class="teamTable"><thead><tr><th>Nr.</th><th>Name</th><th>Tore</th><th>Schüsse aufs Tor</th><th>Schüsse vorbei</th><th>Gelbe Karten</th><th>Rote Karten</th><th>Elfmeter</th><th>Fouls</th></tr></thead><tbody>`;
-  Object.values(totals).sort((a,b)=>Number(a.number)-Number(b.number)).forEach(r=>{html+=`<tr><td>${r.number}</td><td>${r.name||''}</td><td>${r['Tore']}</td><td>${r['Schüsse aufs Tor']}</td><td>${r['Schüsse vorbei']}</td><td>${r['Gelbe Karten']}</td><td>${r['Rote Karten']}</td><td>${r['Elfmeter']}</td><td>${r['Fouls']}</td></tr>`;});
+  html+=`<div style="overflow:auto"><table class="seasonGrid"><thead><tr><th>Nr.</th><th>Name</th><th>Tore</th><th>Schüsse aufs Tor</th><th>Schüsse vorbei</th><th>Gelbe Karten</th><th>Rote Karten</th><th>Elfmeter</th><th>Fouls</th></tr></thead><tbody>`;
+  Object.values(totals).sort((a,b)=>Number(a.number)-Number(b.number)).forEach(r=>{html+=`<tr><td>${r.number}</td><td class="name">${r.name||''}</td><td>${r['Tore']}</td><td>${r['Schüsse aufs Tor']}</td><td>${r['Schüsse vorbei']}</td><td>${r['Gelbe Karten']}</td><td>${r['Rote Karten']}</td><td>${r['Elfmeter']}</td><td>${r['Fouls']}</td></tr>`;});
   html+='</tbody></table></div></div>'; host.innerHTML=html;
 }
 
 function exportWorkbook(){
   savePlayers(false);
   const snap=currentMatchSnapshot(), wb=XLSX.utils.book_new();
-  const spieltag=[['Spieltag',''],['Heimmannschaft',snap.home],['Auswärtsmannschaft',snap.away],['Reguläre Spielzeit pro Halbzeit',ft2(snap.hm*60)],['1. Halbzeit regulär',ft2(snap.h1T)],['1. Halbzeit Nachspielzeit',ft2(snap.h1NS)],['2. Halbzeit regulär',ft2(snap.h2T)],['2. Halbzeit Nachspielzeit',ft2(snap.h2NS)],['',''],['Kategorie','Wert']];
+  const gegentore = snap.counters.ag||0;
+  const spieltag=[['Spieltag',''],['Heimmannschaft',snap.home],['Auswärtsmannschaft',snap.away],['Reguläre Spielzeit pro Halbzeit',ft2(snap.hm*60)],['1. Halbzeit regulär',ft2(snap.h1T)],['1. Halbzeit Nachspielzeit',ft2(snap.h1NS)],['2. Halbzeit regulär',ft2(snap.h2T)],['2. Halbzeit Nachspielzeit',ft2(snap.h2NS)],['',''],['Kategorie','Wert'],['Gegentore',gegentore]];
   STAT_DEFS.forEach(s=>{spieltag.push([s.title+' Heim',snap.counters[s.homeId]||0]);spieltag.push([s.title+' Auswärts',snap.counters[s.awayId]||0]);});
   spieltag.push(['',''],['Dokumentierte Ereignisse','']);
   STAT_DEFS.forEach(s=>{
     spieltag.push([s.title,'']);
     if(!(snap.logs[s.key]||[]).length) spieltag.push(['Keine Einträge','']);
-    else {spieltag.push(['Zeitpunkt','Beschreibung']);(snap.logs[s.key]||[]).forEach(item=>spieltag.push([item.t,item.team+(item.player?' - '+displayPlayer(item.player):'')]));}
+    else {
+      spieltag.push(['Zeitpunkt','Beschreibung']);
+      (snap.logs[s.key]||[]).forEach(item=>{
+        let desc=item.team;
+        if(item.player){
+          desc += ' - ' + ((s.key==='goals' && item.team===snap.away) ? ('#'+item.player) : displayPlayer(item.player));
+        }
+        spieltag.push([item.t,desc]);
+      });
+    }
     spieltag.push(['','']);
   });
+  spieltag.push(['Auswechslungen','']);
+  if(!snap.logs.substitutions.length) spieltag.push(['Keine Einträge','']);
+  else {
+    spieltag.push(['Zeitpunkt','Beschreibung']);
+    snap.logs.substitutions.forEach(item=>spieltag.push([item.t, `${displayPlayer(item.out)} → ${displayPlayer(item.in)}`]));
+  }
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(spieltag),'Spieltag');
 
   const teamRows=[['Nr.','Name','Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls']];
-  playerStatsFromLogs(snap.logs,snap.players).forEach(r=>teamRows.push([r.number,r.name,r['Tore'],r['Schüsse aufs Tor'],r['Schüsse vorbei'],r['Gelbe Karten'],r['Rote Karten'],r['Elfmeter'],r['Fouls']]));
+  playerStatsFromLogs(snap.logs,snap.players,snap.away).forEach(r=>teamRows.push([r.number,r.name,r['Tore'],r['Schüsse aufs Tor'],r['Schüsse vorbei'],r['Gelbe Karten'],r['Rote Karten'],r['Elfmeter'],r['Fouls']]));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(teamRows),'Mein Team');
 
   const seasonRows=[['Nr.','Name','Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls']];
-  const totals={}; JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]').concat([snap]).forEach(m=>{playerStatsFromLogs(m.logs,m.players).forEach(r=>{if(!totals[r.number]) totals[r.number]={...r}; else ['Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls'].forEach(k=>totals[r.number][k]+=r[k]);});});
+  const totals={};
+  JSON.parse(localStorage.getItem(MATCH_HISTORY_KEY)||'[]').concat([snap]).forEach(m=>{
+    playerStatsFromLogs(m.logs,m.players,m.away).forEach(r=>{
+      if(!totals[r.number]) totals[r.number]={...r};
+      else ['Tore','Schüsse aufs Tor','Schüsse vorbei','Gelbe Karten','Rote Karten','Elfmeter','Fouls'].forEach(k=>totals[r.number][k]+=r[k]);
+    });
+  });
   Object.values(totals).sort((a,b)=>Number(a.number)-Number(b.number)).forEach(r=>seasonRows.push([r.number,r.name,r['Tore'],r['Schüsse aufs Tor'],r['Schüsse vorbei'],r['Gelbe Karten'],r['Rote Karten'],r['Elfmeter'],r['Fouls']]));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(seasonRows),'Saison');
   XLSX.writeFile(wb,'spieltag_export.xlsx');
@@ -312,7 +377,7 @@ function loadState(){
     const s=JSON.parse(raw); mo=s.mo||'idle';sec=s.sec||0;hm=s.hm||45;hn=s.hn||1;nsS=s.nsS||0;h1T=s.h1T||0;h2T=s.h2T||0;h1NS=s.h1NS||0;h2NS=s.h2NS||0;runStartedAt=s.runStartedAt==null?null:s.runStartedAt;nsStartedAt=s.nsStartedAt==null?null:s.nsStartedAt;
     if(s.cs) Object.keys(cs).forEach(k=>cs[k]=s.cs[k]||0);
     hist=Array.isArray(s.hist)?s.hist:[];
-    if(s.logs) logs=s.logs;
+    if(s.logs){logs=s.logs; if(!logs.substitutions) logs.substitutions=[];}
     if(Array.isArray(s.players)&&s.players.length) players=s.players;
     document.getElementById('tH').value=s.teamH||'';document.getElementById('tAName').value=s.teamA||'';document.getElementById('cH').value=s.colorH||'#c2185b';document.getElementById('cA').value=s.colorA||'#1e88e5';document.getElementById('hM').value=hm;
   }catch(e){console.error(e);}
