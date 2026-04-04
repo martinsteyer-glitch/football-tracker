@@ -13,7 +13,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Spieltag</title>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js">
+var numCallback=null;
+function askNumber(cb){
+ numCallback=cb;
+ document.getElementById('numPad').style.display='flex';
+ document.getElementById('numInput').value='';
+ document.getElementById('numInput').focus();
+}
+function numOk(){
+ var v=document.getElementById('numInput').value;
+ document.getElementById('numPad').style.display='none';
+ if(numCallback) numCallback(v);
+}
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--hc:#c2185b;--ac:#1e88e5}
@@ -92,7 +106,7 @@ body{
         <div class="swapArrow">→</div>
         <input class="quickNo" id="swapIn" type="number" placeholder="Rein" inputmode="numeric">
       </div>
-      <button class="actionBtn gray" type="button" onclick="addSubstitution()">Auswechslung speichern</button>
+      <button style="background:var(--hc); margin-left:8px;">↵</button>
       <div class="log" id="log_substitutions"></div>
     </div>
 
@@ -106,7 +120,7 @@ body{
   <section id="page_team" class="page">
     <div class="sec">
       <h2>Mein Team</h2>
-      <div class="subtle">Nummern und Spielernamen werden gespeichert und später automatisch verwendet.</div>
+      <div class="subtle">.</div>
       <table class="teamTable">
         <thead><tr><th>Nr.</th><th>Name</th></tr></thead>
         <tbody id="teamRows"></tbody>
@@ -401,6 +415,31 @@ if(mo!=='idle') document.getElementById('tRow').classList.add('hd');
 uT(); startUITicker(); renderSeason();
 window.addEventListener('beforeunload',()=>{savePlayers(false);saveState();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){savePlayers(false);saveState();}});
+
+var numCallback=null;
+function askNumber(cb){
+ numCallback=cb;
+ document.getElementById('numPad').style.display='flex';
+ document.getElementById('numInput').value='';
+ document.getElementById('numInput').focus();
+}
+function numOk(){
+ var v=document.getElementById('numInput').value;
+ document.getElementById('numPad').style.display='none';
+ if(numCallback) numCallback(v);
+}
+
 </script>
+
+<div id="numPad" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:20px; border-radius:12px; text-align:center;">
+    <div style="margin-bottom:10px; font-weight:bold;">Spielernummer</div>
+    <input id="numInput" type="number" inputmode="numeric" pattern="[0-9]*"
+           style="font-size:24px; padding:10px; width:100px; text-align:center;">
+    <br><br>
+    <button onclick="numOk()" style="padding:10px 20px;">OK</button>
+  </div>
+</div>
+
 </body>
 </html>
