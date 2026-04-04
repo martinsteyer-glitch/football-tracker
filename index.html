@@ -12,7 +12,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Football Tracker</title>
+<title><span class="navLabel">Spieltag</span></title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js">
 
 </script>
@@ -149,21 +149,17 @@ body{
   font-weight:700;
   cursor:pointer;
 }
-.nav button.active{
-  background:transparent;
-}
+.nav button.active{background:transparent}
 .navLabel{
   font-size:1.1em;
   color:rgba(255,255,255,.45);
   text-transform:uppercase;
   letter-spacing:.5px;
   font-weight:700;
-  background:transparent;
+  background:transparent !important;
   padding:0;
 }
-.nav button.active .navLabel{
-  color:#ffffff;
-}
+.nav button.active .navLabel{color:#ffffff}
 
 </style>
 </head>
@@ -393,15 +389,15 @@ function uT(){
 function startUITicker(){stopTicker(); if(mo==='run'||mo==='ns') tI=setInterval(()=>{uT();saveState();},250);}
 function hE(fromAuto){refreshTimeState();stopTicker();mo='ns';if(!fromAuto)nsS=0;nsStartedAt=nowSec();uT();startUITicker();saveState();}
 function finishPeriod(){refreshTimeState();stopTicker();if(mo==='ns'&&nsStartedAt!==null){nsS=getNsElapsed();nsStartedAt=null;} if(hn===1){h1T=hm*60;h1NS=nsS;mo='break';sec=0;nsS=0;}else{h2T=hm*60;h2NS=nsS;mo='done';nsS=h2NS;}uT();saveState();}
-function startHalf(halfNo){hn=halfNo;sec=0;nsS=0;runStartedAt=nowSec();nsStartedAt=null;mo='run';document.getElementById('tRow').classList.add('hd');uT();startUITicker();saveState();}
-function tA(){refreshTimeState();if(mo==='idle'){hm=parseInt(document.getElementById('hM').value,10)||45;if(hm<1)hm=45;document.getElementById('hM').value=hm;h1T=0;h2T=0;h1NS=0;h2NS=0;startHalf(1);return;}if(mo==='run'){sec=getRegElapsed();runStartedAt=null;mo='pau';uT();stopTicker();saveState();return;}if(mo==='pau'){runStartedAt=nowSec();mo='run';uT();startUITicker();saveState();return;}if(mo==='ns'){finishPeriod();return;}if(mo==='break'){startHalf(2);return;}}
+function startHalf(halfNo){hn=halfNo;sec=0;nsS=0;runStartedAt=nowSec();nsStartedAt=null;mo='run';document.getElementById('tRow').style.display='none';uT();startUITicker();saveState();}
+function tA(){refreshTimeState();if(mo==='idle'){hm=parseInt(document.getElementById('hM').value,10)||45;if(hm<1)hm=45;document.getElementById('hM').value=hm;h1T=0;h2T=0;h1NS=0;h2NS=0;startHalf(1);return;}if(mo==='run'){sec=getRegElapsed();runStartedAt=null;mo='pau';document.getElementById('tRow').style.display='flex';uT();stopTicker();saveState();return;}if(mo==='pau'){document.getElementById('tRow').style.display='none';runStartedAt=nowSec();mo='run';uT();startUITicker();saveState();return;}if(mo==='ns'){document.getElementById('tRow').style.display='flex';finishPeriod();return;}if(mo==='break'){document.getElementById('tRow').style.display='none';startHalf(2);return;}}
 
 function resetMatchData(){
   mo='idle';tI=null;sec=0;hm=45;hn=1;nsS=0;h1T=0;h2T=0;h1NS=0;h2NS=0;runStartedAt=null;nsStartedAt=null;hist=[];
   ALL.forEach(id=>cs[id]=0); STAT_DEFS.forEach(s=>logs[s.key]=[]); logs.substitutions=[];
 }
 function rA(){stopTicker();resetMatchData();ALL.forEach(id=>document.getElementById(id).textContent='0');document.getElementById('hM').value='45';
-  document.getElementById('tRow').style.display='flex';document.getElementById('tRow').classList.remove('hd');renderLogs();uT();saveState();}
+  document.getElementById('tRow').style.display='flex';renderLogs();uT();saveState();}
 
 function playerStatsFromLogs(matchLogs, playerList, matchAway){
   const result={}, map={goals:'Tore',shotsOnTarget:'Schüsse aufs Tor',shotsOffTarget:'Schüsse vorbei',yellow:'Gelbe Karten',red:'Rote Karten',penalties:'Elfmeter',fouls:'Fouls'};
@@ -509,8 +505,7 @@ renderTeamSuggestions();
 ALL.forEach(id=>document.getElementById(id).textContent=cs[id]);
 applyColors(); renderLogs();
 
-if(mo!=='idle') document.getElementById('tRow').style.display='none';
-else document.getElementById('tRow').style.display='flex';
+if(mo==='idle' || mo==='pau' || mo==='done' || mo==='break'){ document.getElementById('tRow').style.display='flex'; } else { document.getElementById('tRow').style.display='none'; }
 
 uT(); startUITicker(); renderSeason();
 window.addEventListener('beforeunload',()=>{savePlayers(false);saveState();});
